@@ -37,6 +37,9 @@ else
     exit 0
 fi
 
+#__不是每次运行都能成功，所以多次执行__
+while true
+do
 #__当前提速状态__
 myOrderInfo=`curl -s -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${USER_DATA} "https://www.fangyb.com:2039/biz/common/myOrder.action"`
 stateCode=`echo "${myOrderInfo}" | awk -F  '"' '{print $(NF-1)}'`
@@ -45,10 +48,6 @@ orderId=`echo "${myOrderInfo}" | awk -F  '"' '{print $82}'`
 SPEED_DATA="{\"userName\":\"${Name}\",\"className\":\"${className}\",\"orderId\":\"${orderId}\"}"
 
 sleep 1
-#__不是每次运行都能成功，所以多次执行__
-result=0
-while(( 0 == ${result} ))
-do
     if [ "true" == ${stateCode} ]
     then
         echo "----提速状态：提速中----"
@@ -85,7 +84,7 @@ do
         then
             curl -s -o /dev/null -X POST "https://push.xuthus.cc/send/${COOLKEY}?c=提速成功"
         fi
-        result=1
+        break
     else
         echo "----提速失败，开始重试"
     fi
