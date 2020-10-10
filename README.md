@@ -10,5 +10,6 @@
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/1010/181403_6fac2c80_2295960.png "1.png")
 3.  用浏览器登录路由器，找到“系统管理-服务-其他服务-计划任务（Crontab）”，将0 */7 * * * /etc/storage/script/GSL.sh
 输入其中，此处任以/etc/storage/script/为例，具体位置请以个人喜好为准。0 */7 * * *表示每7小时执行一次。最后别忘了点击应用本页设置
+![输入图片说明](https://images.gitee.com/uploads/images/2020/1010/181846_d3f2cf07_2295960.png "2.png")
 
 
