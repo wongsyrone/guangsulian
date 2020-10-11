@@ -92,8 +92,8 @@ sleep 1
         let "NUMBER++"
         #重试次数超过10次，则退出
         if [ ${NUBMER} > 10 ]
-        logger -t "【光速联提速脚本】" "————————提速失败超过10次，退出————————"
         then
+            logger -t "【光速联提速脚本】" "————————提速失败超过10次，退出————————"
 			if [ -n "SCKEY" ]
 	        then
 	            curl -s -o /dev/null -X POST "https://sc.ftqq.com/${SCKEY}.send?text=提速失败"
