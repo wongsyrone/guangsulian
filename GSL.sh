@@ -38,8 +38,10 @@ else
 fi
 
 #__不是每次运行都能成功，所以多次执行__
+NUMBER=1
 while true
 do
+
 #__当前提速状态__
 myOrderInfo=`curl -s -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${USER_DATA} "https://www.fangyb.com:2039/biz/common/myOrder.action"`
 stateCode=`echo "${myOrderInfo}" | awk -F  '"' '{print $(NF-1)}'`
@@ -47,7 +49,8 @@ className=`echo "${myOrderInfo}" | awk -F  '"' '{print $38}'`
 orderId=`echo "${myOrderInfo}" | awk -F  '"' '{print $82}'`
 SPEED_DATA="{\"userName\":\"${Name}\",\"className\":\"${className}\",\"orderId\":\"${orderId}\"}"
 
-sleep 1
+sleep 2
+
     if [ "true" == ${stateCode} ]
     then
         echo "----提速状态：提速中----"
@@ -62,7 +65,8 @@ sleep 1
     
     #__开始提速__
     curl -s -o /dev/null -m ${CURL_TIMEOUT} -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${SPEED_DATA} "https://www.fangyb.com:2039/biz/common/openSpeed.action"
-    sleep 2
+    sleep 4
+
     #__提速结果__
     #访问两次是为了刷新
     
@@ -87,6 +91,22 @@ sleep 1
         break
     else
         echo "----提速失败，开始重试"
+        let "NUMBER++"
+        #重试次数超过10次，则退出
+        if [ ${NUBMER} > 10 ]
+        then
+			if [ -n "SCKEY" ]
+	        then
+	            curl -s -o /dev/null -X POST "https://sc.ftqq.com/${SCKEY}.send?text=提速失败"
+	        fi
+	        
+	        if [ -n "COOLKEY" ]
+	        then
+	            curl -s -o /dev/null -X POST "https://push.xuthus.cc/send/${COOLKEY}?c=提速失败"
+	        fi
+	        break
+		fi
+
     fi
 done
     
