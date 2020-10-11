@@ -92,6 +92,7 @@ sleep 1
         let "NUMBER++"
         #重试次数超过10次，则退出
         if [ ${NUBMER} > 10 ]
+        logger -t "【光速联提速脚本】" "————————提速失败超过10次，退出————————"
         then
 			if [ -n "SCKEY" ]
 	        then
