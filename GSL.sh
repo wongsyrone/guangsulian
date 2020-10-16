@@ -10,10 +10,25 @@ SCKEY=""
 #COOLPUSH
 COOLKEY=""
 #
+
+pushFun(){
+    
+    if [ -n "$1" ]
+        then
+            curl -s -o /dev/null -X POST "https://sc.ftqq.com/$1.send?text=$3"
+        fi
+        
+        if [ -n "$2" ]
+        then
+            curl -s -o /dev/null -X POST "https://push.xuthus.cc/send/$2?c=$3"
+        fi
+}
+
 #__json解析__
 parse_json(){
 echo "${1//\"/}" | sed "s/.*$2:\([^,}]*\).*/\1/"
 }
+
 
 #__登陆__
 logger -t "【光速联提速脚本】" "————————登陆中————————"
@@ -46,7 +61,21 @@ myOrderInfo=`curl -s -H "Content-Type: application/json" -H "Authorization: ${Au
 stateCode=`echo "${myOrderInfo}" | awk -F  '"' '{print $(NF-1)}'`
 className=`echo "${myOrderInfo}" | awk -F  '"' '{print $38}'`
 orderId=`echo "${myOrderInfo}" | awk -F  '"' '{print $82}'`
+validDate=`echo "${myOrderInfo}" | awk -F  '"' '{print $66}'`
+
+#__判断购买是否到期
+today=$(date "+%Y-%m-%d")
+t1=`date -d "${validDate}" +%s`
+t2=`date -d "${today}" +%s`
+if [ ${t2} -gt ${t1} ]
+then
+    pushFun ${SCKEY} ${COOLKEY} "购买已到期，请续费"
+    break
+fi
+
+#__构建提速参数
 SPEED_DATA="{\"userName\":\"${Name}\",\"className\":\"${className}\",\"orderId\":\"${orderId}\"}"
+
 
 sleep 1
 
@@ -77,15 +106,7 @@ sleep 1
     then
         logger -t "【光速联提速脚本】" "————————提速成功————————"
         echo "`echo "${speedQuery}" | awk -F  ',' '{for (i=6;i<=10;i++){print $i}}'`"
-        if [ -n "SCKEY" ]
-        then
-            curl -s -o /dev/null -X POST "https://sc.ftqq.com/${SCKEY}.send?text=提速成功"
-        fi
-        
-        if [ -n "COOLKEY" ]
-        then
-            curl -s -o /dev/null -X POST "https://push.xuthus.cc/send/${COOLKEY}?c=提速成功"
-        fi
+        pushFun ${SCKEY} ${COOLKEY} "提速成功"
         break
     else
         logger -t "【光速联提速脚本】" "————————提速失败，开始重试————————"
@@ -94,18 +115,11 @@ sleep 1
         if [ ${NUBMER} > 10 ]
         then
             logger -t "【光速联提速脚本】" "————————提速失败超过10次，退出————————"
-			if [ -n "SCKEY" ]
-	        then
-	            curl -s -o /dev/null -X POST "https://sc.ftqq.com/${SCKEY}.send?text=提速失败"
-	        fi
-	        
-	        if [ -n "COOLKEY" ]
-	        then
-	            curl -s -o /dev/null -X POST "https://push.xuthus.cc/send/${COOLKEY}?c=提速失败"
-	        fi
-	        break
-		fi
+        pushFun ${SCKEY} ${COOLKEY} "提速失败"
+            break
+        fi
 
     fi
 done
     
+
