@@ -5,9 +5,9 @@ Name="手机号"
 Password="密码的32位md5值的小写"
 LOGIN_DATA="{\"userName\":\"${Name}\",\"userPassword\":\"${Password}\"}"
 USER_DATA="{\"userName\":\"${Name}\"}"
-#Server酱
+#Server酱（可选）
 SCKEY=""
-#COOLPUSH
+#COOLPUSH（可选）
 COOLKEY=""
 #
 
