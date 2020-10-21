@@ -14,14 +14,14 @@ COOLKEY=""
 pushFun(){
     
     if [ -n "$1" ]
-        then
-            curl -s -o /dev/null -X POST "https://sc.ftqq.com/$1.send?text=$3"
-        fi
+    then
+        curl -s -o /dev/null -X POST "https://sc.ftqq.com/$1.send?text=$3"
+    fi
         
-        if [ -n "$2" ]
-        then
-            curl -s -o /dev/null -X POST "https://push.xuthus.cc/send/$2?c=$3"
-        fi
+    if [ -n "$2" ]
+    then
+        curl -s -o /dev/null -X POST "https://push.xuthus.cc/send/$2?c=$3"
+    fi
 }
 
 #__json解析__
