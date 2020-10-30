@@ -69,7 +69,7 @@ t1=`date -d "${validDate}" +%s`
 t2=`date -d "${today}" +%s`
 if [ ${t2} -gt ${t1} ]
 then
-    logger -t "购买已到期，请续费"
+	logger -t "【光速联提速脚本】" "————————购买已到期，请续费————————"
     pushFun ${SCKEY} ${COOLKEY} "购买已到期，请续费"
     break
 fi
