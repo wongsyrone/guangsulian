@@ -15,12 +15,12 @@ pushFun(){
     
     if [ -n "$1" ]
     then
-        curl -s -o /dev/null -X POST "https://sc.ftqq.com/$1.send?text=$3"
+        curl -k -s -o /dev/null -X POST "https://sc.ftqq.com/$1.send?text=$3"
     fi
         
     if [ -n "$2" ]
     then
-        curl -s -o /dev/null -X POST "https://push.xuthus.cc/send/$2?c=$3"
+        curl -k -s -o /dev/null -X POST "https://push.xuthus.cc/send/$2?c=$3"
     fi
 }
 
@@ -32,7 +32,7 @@ echo "${1//\"/}" | sed "s/.*$2:\([^,}]*\).*/\1/"
 
 #__登陆__
 logger -t "【光速联提速脚本】" "————————登陆中————————"
-loginInfo=`curl -s -H "Content-Type: application/json" -X POST -d ${LOGIN_DATA} "https://www.fangyb.com:2039/biz/user/login.do"`
+loginInfo=`curl -k -s -H "Content-Type: application/json" -X POST -d ${LOGIN_DATA} "https://www.fangyb.com:2039/biz/user/login.do"`
 loginCode=$(parse_json ${loginInfo} "code")
 Auth=$(parse_json ${loginInfo} "data")
 if [ 0 == ${loginCode} ]
@@ -57,7 +57,7 @@ while true
 do
 
 #__当前提速状态__
-myOrderInfo=`curl -s -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${USER_DATA} "https://www.fangyb.com:2039/biz/common/myOrder.action"`
+myOrderInfo=`curl -k -s -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${USER_DATA} "https://www.fangyb.com:2039/biz/common/myOrder.action"`
 stateCode=`echo "${myOrderInfo}" | awk -F  '"' '{print $(NF-1)}'`
 className=`echo "${myOrderInfo}" | awk -F  '"' '{print $38}'`
 orderId=`echo "${myOrderInfo}" | awk -F  '"' '{print $82}'`
@@ -85,7 +85,7 @@ sleep 1
         logger -t "【光速联提速脚本】" "————————提速状态：提速中————————"
         logger -t "【光速联提速脚本】" "————————正在重新开始提速————————"
     #__关闭提速__
-        curl -s -o /dev/null -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${SPEED_DATA} "https://www.fangyb.com:2039/biz/common/closeSpeed.action"
+        curl -k -s -o /dev/null -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${SPEED_DATA} "https://www.fangyb.com:2039/biz/common/closeSpeed.action"
         sleep 2
     else
         logger -t "【光速联提速脚本】" "————————提速状态：未提速————————"
@@ -93,15 +93,15 @@ sleep 1
     fi
     
     #__开始提速__
-    curl -s -o /dev/null -m ${CURL_TIMEOUT} -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${SPEED_DATA} "https://www.fangyb.com:2039/biz/common/openSpeed.action"
+    curl -k -s -o /dev/null -m ${CURL_TIMEOUT} -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${SPEED_DATA} "https://www.fangyb.com:2039/biz/common/openSpeed.action"
     sleep 4
 
     #__提速结果__
     #访问两次是为了刷新
     
-    curl -s -o /dev/null -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${USER_DATA} "https://www.fangyb.com:2039/biz/common/speedQuery.do"
+    curl -k -s -o /dev/null -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${USER_DATA} "https://www.fangyb.com:2039/biz/common/speedQuery.do"
     sleep 1
-    speedQuery=`curl -s -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${USER_DATA} "https://www.fangyb.com:2039/biz/common/speedQuery.do"`
+    speedQuery=`curl -k -s -H "Content-Type: application/json" -H "Authorization: ${Auth}" -X POST -d ${USER_DATA} "https://www.fangyb.com:2039/biz/common/speedQuery.do"`
     resultCode=`echo "${speedQuery}" | awk -F  '"' '{print $(NF-1)}'`
     if [ "true" == ${resultCode} ]
     then
